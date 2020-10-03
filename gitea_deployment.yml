@@ -1,0 +1,37 @@
+##deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitea
+  namespace: default
+  labels:
+    app: gitea 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitea
+  template:
+    metadata:
+      labels:
+        app: gitea
+    spec:
+      containers:
+        - name: "gitea"
+          image: manniu-app-registry.cn-shanghai.cr.aliyuncs.com/dev/gitea:1.0.1
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 0.5
+              memory: 256Mi
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: volume-localtime
+      imagePullSecrets:
+        - name: libei
+      restartPolicy: Always
+      volumes:
+        - hostPath:
+            path: /etc/localtime
+            type: ''
+          name: volume-localtime
