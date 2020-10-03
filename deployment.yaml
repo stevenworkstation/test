@@ -1,11 +1,15 @@
 ---
-  apiVersion: "extensions/v1beta1"
+##  apiVersion: "extensions/v1beta1"
+  apiVersion: apps/v1
   kind: "Deployment"
   metadata:
     name: "kube-applier"
     namespace: "kube-system"
   spec:
     replicas: 1
+    selector:
+      matchLabels:
+        app: kube-applier
     template:
       metadata:
         labels:
@@ -20,7 +24,7 @@
                 value: "/k8s/resources"
               - name: "LISTEN_PORT"
                 value: "2020"
-            image: "kube-applier:v0.2.0"
+            image: manniu-app-registry.cn-shanghai.cr.aliyuncs.com/dev/kube-applier:0.0.0
             ports:
               - containerPort: 2020
             volumeMounts:
@@ -31,15 +35,18 @@
               - "/git-sync"
             env:
               - name: "GIT_SYNC_REPO"
-                value: "https://github.com/kubernetes/kubernetes.git"
+                #                value: "https://github.com/kubernetes/kubernetes.git"
+                value: "https://github.com/stevenworkstation/test.git"
               - name: "GIT_SYNC_DEST"
                 value: "resources"
-            image: "gcr.io/google_containers/git-sync:v2.0.6"
+            image: manniu-app-registry.cn-shanghai.cr.aliyuncs.com/dev/git-sync:0.0.0
             ports:
               - containerPort: 2020
             volumeMounts:
               - name: "git-repo"
                 mountPath: "/git"
+        imagePullSecrets:
+        - name: libei
         volumes:
           - name: "git-repo"
             emptyDir: {}
